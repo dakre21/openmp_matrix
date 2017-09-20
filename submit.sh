@@ -30,13 +30,13 @@ if [[ -z ${marg} ]]; then
 fi
 
 # Load vtune prof tool
-module load vtune_amplifier_xe/2016/2016.4.258
+#module load vtune_amplifier_xe/2016/2016.4.258
 
 ### set directory for job execution
 cd /extra/dakre/openmp_matrix
 ### run your executable program with begin and end date and time output
 date
-export OMP_NUM_THREADS=4
-./matrix $marg &
-amplxe-cl -collect system-overview --target matrix
+export OMP_NUM_THREADS=64
+./matrix $marg 
+#amplxe-cl -collect system-overview --target matrix
 date

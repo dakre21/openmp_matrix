@@ -31,6 +31,9 @@ int main (int argc, char* argv[])
     int col_two = 256;
     int lower_bounds = 0;
     int upper_bounds = 512;
+    double start_time = 0;
+    double stop_time = 0;
+    double total_time = 0;
     unsigned int** matrix_one; 
     unsigned int** matrix_two;
     unsigned int** matrix_product;
@@ -46,6 +49,8 @@ int main (int argc, char* argv[])
         exit(-1);
     }
 
+    start_time = omp_get_wtime();
+
     if (strcmp(argv[1], "1")  == 0) 
     {
         multiply_matrix(&matrix_one, &matrix_one, &matrix_product,
@@ -60,6 +65,12 @@ int main (int argc, char* argv[])
         printf("ERROR: Input is invalid\n");
         exit(-1);
     }
+
+    stop_time = omp_get_wtime();
+    total_time = stop_time - start_time;
+
+    printf("INFO: Total execution time %.6f\n", total_time);
+
 
     exit(0);
 }
