@@ -29,16 +29,16 @@ int main (int argc, char* argv[])
     int col_one = 512;
     int row_two = 256;
     int col_two = 256;
+    int lower_bounds = 0;
+    int upper_bounds = 512;
     unsigned int** matrix_one; 
     unsigned int** matrix_two;
     unsigned int** matrix_product;
-    unsigned int** matrix_filter;
 
     // Create matrices for program
     create_matrix(&matrix_one, row_one, col_one, false);
     create_matrix(&matrix_two, row_two, col_two, false);
     create_matrix(&matrix_product, row_one, col_one, true);
-    create_matrix(&matrix_filter, row_two, col_two, true);
 
     if (argv[1] == NULL) 
     {
@@ -46,7 +46,6 @@ int main (int argc, char* argv[])
         exit(-1);
     }
 
-    //TODO: Get system time here
     if (strcmp(argv[1], "1")  == 0) 
     {
         multiply_matrix(&matrix_one, &matrix_one, &matrix_product,
@@ -61,10 +60,6 @@ int main (int argc, char* argv[])
         printf("ERROR: Input is invalid\n");
         exit(-1);
     }
-
-    // TODO: Get final system time here
-    // TODO: Calc difference between threaded computation times
-    // and main thread overall time to get comm time
 
     exit(0);
 }

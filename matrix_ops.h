@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <string.h>
-#include <mpi.h>
+#include "omp.h"
 
 // Global declaration max
 double max = 0;
@@ -52,6 +52,9 @@ void multiply_matrix(unsigned int*** matrix_one, unsigned int*** matrix_two,
         unsigned int*** matrix_product, int lower_bounds, int upper_bounds, 
         int row, int col)
 {
+#pragma omp parallel 
+{
+    #pragma omp for collapse(3) 
     for (int i = lower_bounds; i < upper_bounds; i++)
     {
         for (int j = 0; j < col; j++)
@@ -62,6 +65,7 @@ void multiply_matrix(unsigned int*** matrix_one, unsigned int*** matrix_two,
             }
         }
     }
+}
 }
 
 // Function to help perform mean image filtering on matrix
@@ -75,10 +79,16 @@ void calc_matrix_filter(unsigned int*** matrix, int lower_bounds, int upper_boun
     int new_upper_bounds = 3 + lower_bounds;
     int new_lower_bounds = lower_bounds;
 
+#pragma omp parallel
+{
+    #pragma omp while private(low_col) private(high_col) private(new_lower_bounds) private(new_upper_bounds) collapse(2)
     while (new_lower_bounds < upper_bounds-1)
     {
         while (low_col < col) 
         {
+#pragma omp parallel 
+{
+            #pragma omp for private(max) private(square_sum) collapse(2)
             for (int i = new_lower_bounds; i < new_upper_bounds; i++)
             {
                 for (int j = low_col; j < high_col; j++)
@@ -104,4 +114,6 @@ void calc_matrix_filter(unsigned int*** matrix, int lower_bounds, int upper_boun
         new_lower_bounds = new_upper_bounds;
         new_upper_bounds += 3;
     }
+}
+}
 }
