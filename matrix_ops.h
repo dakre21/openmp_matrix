@@ -71,6 +71,8 @@ void multiply_matrix(unsigned int*** matrix_one, unsigned int*** matrix_two,
 // Function to help perform mean image filtering on matrix
 void calc_matrix_filter(unsigned int*** matrix, int lower_bounds, int upper_bounds, int row, int col)
 {
+#pragma omp parallel
+{
     double square_sum = 0;
     int col_chunks = col / 3;
     int low_col = 0;
@@ -79,16 +81,12 @@ void calc_matrix_filter(unsigned int*** matrix, int lower_bounds, int upper_boun
     int new_upper_bounds = 3 + lower_bounds;
     int new_lower_bounds = lower_bounds;
 
-#pragma omp parallel
-{
-    #pragma omp while private(low_col) private(high_col) private(new_lower_bounds) private(new_upper_bounds) collapse(2)
+    #pragma omp while collapse(2) private(new_lower_bounds, new_upper_bounds, low_col, high_col)
     while (new_lower_bounds < upper_bounds-1)
     {
         while (low_col < col) 
         {
-#pragma omp parallel 
-{
-            #pragma omp for private(max) private(square_sum) collapse(2)
+            #pragma omp for collapse(2) private(max, square_sum)
             for (int i = new_lower_bounds; i < new_upper_bounds; i++)
             {
                 for (int j = low_col; j < high_col; j++)
@@ -114,6 +112,5 @@ void calc_matrix_filter(unsigned int*** matrix, int lower_bounds, int upper_boun
         new_lower_bounds = new_upper_bounds;
         new_upper_bounds += 3;
     }
-}
 }
 }
